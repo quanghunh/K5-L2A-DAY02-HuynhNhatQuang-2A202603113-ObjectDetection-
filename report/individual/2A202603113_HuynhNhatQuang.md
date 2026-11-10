@@ -75,7 +75,7 @@ Kết quả: [outputs/annotation_evaluation.json](outputs/annotation_evaluation.
 Nguồn: `model_eval_metrics.json`, [assets/yolo26_runs/vehicle_eval/](assets/yolo26_runs/vehicle_eval/), [assets/eval_predictions/](assets/eval_predictions/), [assets/yolo26_runs/vehicle_annotation/](assets/yolo26_runs/vehicle_annotation/).
 
 - **Một Vật cụ thể:** 
-  - xe nhỏ dạng hộp ở góc trên `drive_051` mang nhãn "bus".
+  - xe buýt to màu trắng ở giữa hình `drive_052` mang nhãn "bus".
 
 **Trả lời bốn câu hỏi cuối notebook:**
 
@@ -124,21 +124,12 @@ Nguồn: `model_eval_metrics.json`, [assets/yolo26_runs/vehicle_eval/](assets/yo
 
 | Tiêu chí (điểm) | Bằng chứng hiện có | Đánh giá |
 |---|---|---|
-<<<<<<< HEAD
 | Hoàn thành và định dạng YOLO | `check_yolo_labels.py`: "ĐẠT cấu trúc: 50/50 file nhãn hợp lệ". | Đạt về cấu trúc. **Phần "bốn class ID đúng"** nhưng thứ tự ID xuất từ CVAT (`car, bus, van, truck`) khác `data.yaml` (`car, truck, bus, van`). |
 | Đầy đủ vật thể | Recall gold 0.735; gán cả xe bị che và xe bị cắt rìa (152 box chạm mép). | Còn 173 FN. Một số ảnh khớp ít như `drive_009` (6/21), `drive_042` (1/4), chưa rà nguyên nhân. |
 | Độ bám sát và hình học box (20) | mean IoU of matches 0.8487 (≥ 0.70, đạt mức "xuất sắc" 0.80). | Đạt theo số liệu. Có box xe nhỏ ở xa lệch 2–4 px (IoU 0.66–0.74 ở `drive_001`). |
 | Mini guideline và quyết định mơ hồ | `GUIDELINE_MINI.md` có định nghĩa lớp, quy tắc box và 3 ca mơ hồ có lý do. | Đủ yêu cầu. |
 | Gold-set annotation QC | `annotation_evaluation.json`: F1 0.5476, mean IoU 0.8487. | **Vừa đủ**:  0.50 < F1 > 0.80 và chưa có vòng rework. |
 | Pipeline YOLO và phân tích | Colab chạy xong 50 epoch; không dùng eval để train; có metrics, ảnh eval và phân tích lỗi (mục 5). | Có kết quả. Cần train lại sau khi sửa class ID để số liệu theo lớp có ý nghĩa. |
-=======
-| Hoàn thành và định dạng YOLO (10) | `check_yolo_labels.py`: "ĐẠT cấu trúc: 50/50 file nhãn hợp lệ". | Đạt về cấu trúc. **Phần "bốn class ID đúng" có rủi ro:** thứ tự ID xuất từ CVAT (`car, bus, van, truck`) khác `data.yaml` (`car, truck, bus, van`). |
-| Đầy đủ vật thể (20) | Recall gold 0.735; gán cả xe bị che và xe bị cắt rìa (152 box chạm mép). | Còn 173 FN. Một số ảnh khớp ít như `drive_009` (6/21), `drive_042` (1/4), chưa rà nguyên nhân. |
-| Độ bám sát và hình học box (20) | mean IoU of matches 0.8487 (≥ 0.70, gần mức "xuất sắc" 0.80). | Đạt theo số liệu. Có box xe nhỏ ở xa lệch 2–4 px (IoU 0.66–0.74 ở `drive_001`). |
-| Mini guideline và quyết định mơ hồ (10) | `GUIDELINE_MINI.md` có định nghĩa lớp, quy tắc box và 3 ca mơ hồ có lý do. | Đủ yêu cầu. |
-| Gold-set annotation QC (15) | `annotation_evaluation.json`: F1 0.5476, mean IoU 0.8487. | **Vừa đủ**:  0.50 < F1 < 0.80 và chưa có vòng rework. |
-| Pipeline YOLO và phân tích (10) | Colab chạy xong 50 epoch; không dùng eval để train; có metrics, ảnh eval và phân tích lỗi (mục 5). | Có kết quả. Cần train lại sau khi sửa class ID để số liệu theo lớp có ý nghĩa. |
->>>>>>> cd5a807f9ef2196f05fccda0fcfe60374352ff1d
 
 **Điều kiện bắt buộc:**
 - Có đủ 50 file nhãn.
