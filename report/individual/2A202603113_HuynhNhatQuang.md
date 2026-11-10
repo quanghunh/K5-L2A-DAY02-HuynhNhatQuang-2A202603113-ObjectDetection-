@@ -75,7 +75,7 @@ Kết quả: [outputs/annotation_evaluation.json](outputs/annotation_evaluation.
 Nguồn: `model_eval_metrics.json`, [assets/yolo26_runs/vehicle_eval/](assets/yolo26_runs/vehicle_eval/), [assets/eval_predictions/](assets/eval_predictions/), [assets/yolo26_runs/vehicle_annotation/](assets/yolo26_runs/vehicle_annotation/).
 
 - **Một Vật cụ thể:** 
-  - xe nhỏ dạng hộp ở góc trên `drive_051` mang nhãn "bus".
+  - xe buýt to màu trắng ở giữa hình `drive_052` mang nhãn "bus".
 
 **Trả lời bốn câu hỏi cuối notebook:**
 
