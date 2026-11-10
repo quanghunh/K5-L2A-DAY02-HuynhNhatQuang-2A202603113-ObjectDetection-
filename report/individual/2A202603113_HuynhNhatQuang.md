@@ -13,26 +13,6 @@
 
 Chi tiết: [GUIDELINE_MINI.md](../../GUIDELINE_MINI.md).
 
-**Cách áp dụng schema:**
-- 4 lớp `car`, `bus`, `van`, `truck`, nhãn dạng bounding box chữ nhật. Xuất YOLO 1.1 (0 = car, 1 = bus, 2 = van, 3 = truck).
-- Gán **mọi phương tiện nhìn thấy và nhận ra được**, gồm cả xe đậu.
-- Box bám sát phần thân xe nhìn thấy. Xe bị che hoặc bị cắt rìa vẫn gán, và box bao luôn cả phần bị khuất (theo ước lượng người gán).
-- Không gán cụm xe dày đặc ở hậu cảnh khi không tách được từng chiếc.
-- Không chắc `car` hay `van` thì chọn `car`.
-
-**Ba ca mơ hồ đã quyết định:**
-
-| Ảnh | Tình huống | Quyết định |
-|---|---|---|
-| `drive_015` | Xe tải nhỏ thùng hở chở hàng cồng kềnh phủ bạt; cabin nhỏ cỡ xe con| Đổi sang `truck`, box bao cả cabin và hàng trên thùng |
-| `drive_002` | Xe trắng mui cao bị rìa phải cắt một phần | `van`, box kéo sát mép ảnh |
-| `drive_009` | Xe buýt bị xe buýt khác che; bãi xe dày đặc ở góc trên trái | Gán từng xe buýt bị che (box bao cả phần bị khuất theo ước lượng người gán); không gán cụm hậu cảnh |
-
-**Cần giảng viên làm rõ:**
-
-- Ranh giới giữa `van` và SUV/MPV.
-- Kích thước tối thiểu bắt buộc phải gán.
-
 ## 3. Annotation và self-QC
 
 - **Số file nhãn train:** 50 file `.txt` (`drive_001.txt`–`drive_050.txt`), xuất Ultralytics detector YOLO 1.0 từ task CVAT `Lab-Day02`.
@@ -60,10 +40,9 @@ Chi tiết: [GUIDELINE_MINI.md](../../GUIDELINE_MINI.md).
 | Recall | 0.7351 | — |
 | F1 | 0.5476 | — |
 | mean_iou_of_matches | 0.8487 | — |
-| passed | failed | — |
+| passed | false | — |
 
-Kết quả: [outputs/annotation_evaluation.json](outputs/annotation_evaluation.json). Ngưỡng IoU khớp là 0.5. F1 0.5476 > 0.5. Mean IoU 0.8487 > 0.7. Số box nộp từng ảnh trong file đánh giá khớp với bộ nhãn hiện tại trong CVAT.
-
+Kết quả: [outputs/annotation_evaluation.json](outputs/annotation_evaluation.json). F1 0.5476 > 0.5. Mean IoU 0.8487 > 0.7. Số box nộp từng ảnh trong file đánh giá khớp với bộ nhãn hiện tại trong CVAT.
 
 **Nhận xét (dữ kiện đã kiểm):**
 - Số box nộp (1100) gấp khoảng 1.7 lần số box gold (653). Precision thấp ở cả hai nhóm, recall tương đối ổn.
@@ -78,15 +57,13 @@ Kết quả: [outputs/annotation_evaluation.json](outputs/annotation_evaluation.
   - Thời gian train 50 epoch khoảng **78 giây** (`results.csv`).
 - **Tham số train** (`args.yaml`):
   - Model và dữ liệu: `model: yolo26n.pt` (pretrained, `cls_remap: true`), `data: /content/Day2-Lab/data.yaml`.
-  - Huấn luyện: `epochs: 50`, `imgsz: 640`, `batch: -1` (auto), `optimizer: auto`, `lr0: 0.01`.
-  - Tái lập kết quả: `seed: 20260909`, `deterministic: true`.
-  - Augmentation mặc định: mosaic 1.0, fliplr 0.5, `close_mosaic: 10`.
   - So với notebook:không đổi tham số nào.
 - **Split:**
   - Train gồm 50 ảnh `drive_001`–`drive_050`.
   - Eval/validation gồm 10 ảnh `drive_051`–`drive_060`, xem `assets/eval_predictions/visuals/`.
   - **Không dùng ảnh eval để train.**
-- **Đường dẫn best checkpoint trong phiên chạy:** `/content/Day2-Lab/outputs/yolo26_runs/vehicle_annotation/weights/best.pt`. Đây là checkpoint của **epoch 1**, xem nhận xét bên dưới.
+- **Đường dẫn best checkpoint trong phiên chạy:** `/content/Day2-Lab/outputs/yolo26_runs/vehicle_annotation/weights/best.pt`. 
+Đây là checkpoint của **epoch 1**, xem nhận xét bên dưới.
 
 | Chỉ số trên 10 ảnh eval | Giá trị |
 |---|---:|
@@ -97,17 +74,8 @@ Kết quả: [outputs/annotation_evaluation.json](outputs/annotation_evaluation.
 
 Nguồn: `model_eval_metrics.json`, [assets/yolo26_runs/vehicle_eval/](assets/yolo26_runs/vehicle_eval/), [assets/eval_predictions/](assets/eval_predictions/), [assets/yolo26_runs/vehicle_annotation/](assets/yolo26_runs/vehicle_annotation/).
 
-**mAP50 theo lớp** (`vehicle_eval/BoxPR_curve.png`; tên lớp theo `data.yaml`):
-
-| `car` | `truck` | `bus` | `van` |
-|---:|---:|---:|---:|
-| 0.738 | 0.239 | 0.014 | 0.103 |
-
-- **Nhãn eval** (`vehicle_eval/val_batch0_labels.jpg`):
-  - xe buýt hai tầng ở `drive_052` và xe buýt lớn ở `drive_053` mang nhãn hiển thị "van";
+- **Một Vật cụ thể:** 
   - xe nhỏ dạng hộp ở góc trên `drive_051` mang nhãn "bus".
-  - Như vậy thứ tự ID của nhãn eval cũng khác `data.yaml` ở hai lớp bus/van.
-
 
 **Trả lời bốn câu hỏi cuối notebook:**
 
@@ -146,22 +114,22 @@ Nguồn: `model_eval_metrics.json`, [assets/yolo26_runs/vehicle_eval/](assets/yo
 | Bước/thời điểm | Lỗi quan sát | Cách đã thử | Kết quả/còn thiếu |
 |---|---|---|---|
 | Xe nhỏ ở xa | Xe chỉ rộng 8–20 px, khó kéo box sát bằng tay; lệch 2–4 px đã làm IoU giảm mạnh (3 xe xa ở `drive_001` chỉ đạt IoU 0.66–0.74 với gold). | Phóng to ảnh trong CVAT khi vẽ; đặt ngưỡng trong guideline: gán từ khoảng 8 px nếu còn nhận ra là xe. | Mean IoU toàn bộ vẫn đạt 0.8487, nhưng box xe nhỏ là nguồn rủi ro khi tính ở IoU cao (mAP50–95). |
-| Xe bị che khuất | Xe buýt và xe con chồng lên nhau (`drive_009`), không chắc nên vẽ box phần nhìn thấy hay ước lượng toàn thân. | Chọn quy ước box ước lượng toàn thân, ghi vào guideline.| `drive_009` chỉ khớp 6/21 box gold dù số box gần bằng (22) — chưa xác định do quy ước box hay do vị trí; cần rà bằng mắt. |
+| Xe bị che khuất | Xe buýt và xe con chồng lên nhau (`drive_009`), không chắc nên vẽ box phần nhìn thấy hay ước lượng toàn thân. | Chọn quy ước box ước lượng toàn thân, ghi vào guideline mini.| `drive_009` chỉ khớp 6/21 box gold dù số box gần bằng (22) — chưa xác định do quy ước box hay do vị trí; cần rà bằng mắt. |
 | Xuất nhãn từ CVAT | Không kiểm thứ tự class trong `obj.names` (`car, bus, van, truck`) so với `data.yaml` (`car, truck, bus, van`) trước khi train. | Phát hiện sau khi đọc `labels.jpg` và confusion matrix. | Checker vẫn ĐẠT (chỉ kiểm cấu trúc); cần remap ID và train lại. Bài học: đối chiếu thứ tự lớp ngay khi xuất. |
 | Train YOLO | mAP tốt nhất ở epoch 1, giảm sau khi fine-tune; mAP50 của `bus` chỉ 0.014. | Đối chiếu `labels.jpg`, `val_batch0_labels.jpg` và confusion matrix. | Phát hiện lệch class ID: nhãn CVAT `car,bus,van,truck` khác `data.yaml` `car,truck,bus,van`, và nhãn eval khác ở bus/van. Còn thiếu: remap nhãn, train lại. |
 
 ## 7. Tự đánh giá theo rubric
 
-Đối chiếu [RUBRIC.md](../../RUBRIC.md). Chỉ ghi những gì đã có bằng chứng.
+Đối chiếu [RUBRIC.md](../../RUBRIC.md). 
 
 | Tiêu chí (điểm) | Bằng chứng hiện có | Đánh giá |
 |---|---|---|
-| Hoàn thành và định dạng YOLO (10) | `check_yolo_labels.py`: "ĐẠT cấu trúc: 50/50 file nhãn hợp lệ". | Đạt về cấu trúc. **Phần "bốn class ID đúng" có rủi ro:** thứ tự ID xuất từ CVAT (`car, bus, van, truck`) khác `data.yaml` (`car, truck, bus, van`). |
-| Đầy đủ vật thể (20) | Recall gold 0.735; gán cả xe bị che và xe bị cắt rìa (152 box chạm mép). | Còn 173 FN. Một số ảnh khớp ít như `drive_009` (6/21), `drive_042` (1/4), chưa rà nguyên nhân. |
-| Độ bám sát và hình học box (20) | mean IoU of matches 0.8487 (≥ 0.70, gần mức "xuất sắc" 0.80). | Đạt theo số liệu. Có box xe nhỏ ở xa lệch 2–4 px (IoU 0.66–0.74 ở `drive_001`). |
-| Mini guideline và quyết định mơ hồ (10) | `GUIDELINE_MINI.md` có định nghĩa lớp, quy tắc box và 3 ca mơ hồ có lý do. | Đủ yêu cầu. |
-| Gold-set annotation QC (15) | `annotation_evaluation.json`: F1 0.5476, mean IoU 0.8487. | **Vừa đủ**:  0.50 < F1 > 0.80 và chưa có vòng rework. |
-| Pipeline YOLO và phân tích (10) | Colab chạy xong 50 epoch; không dùng eval để train; có metrics, ảnh eval và phân tích lỗi (mục 5). | Có kết quả. Cần train lại sau khi sửa class ID để số liệu theo lớp có ý nghĩa. |
+| Hoàn thành và định dạng YOLO | `check_yolo_labels.py`: "ĐẠT cấu trúc: 50/50 file nhãn hợp lệ". | Đạt về cấu trúc. **Phần "bốn class ID đúng"** nhưng thứ tự ID xuất từ CVAT (`car, bus, van, truck`) khác `data.yaml` (`car, truck, bus, van`). |
+| Đầy đủ vật thể | Recall gold 0.735; gán cả xe bị che và xe bị cắt rìa (152 box chạm mép). | Còn 173 FN. Một số ảnh khớp ít như `drive_009` (6/21), `drive_042` (1/4), chưa rà nguyên nhân. |
+| Độ bám sát và hình học box (20) | mean IoU of matches 0.8487 (≥ 0.70, đạt mức "xuất sắc" 0.80). | Đạt theo số liệu. Có box xe nhỏ ở xa lệch 2–4 px (IoU 0.66–0.74 ở `drive_001`). |
+| Mini guideline và quyết định mơ hồ | `GUIDELINE_MINI.md` có định nghĩa lớp, quy tắc box và 3 ca mơ hồ có lý do. | Đủ yêu cầu. |
+| Gold-set annotation QC | `annotation_evaluation.json`: F1 0.5476, mean IoU 0.8487. | **Vừa đủ**:  0.50 < F1 > 0.80 và chưa có vòng rework. |
+| Pipeline YOLO và phân tích | Colab chạy xong 50 epoch; không dùng eval để train; có metrics, ảnh eval và phân tích lỗi (mục 5). | Có kết quả. Cần train lại sau khi sửa class ID để số liệu theo lớp có ý nghĩa. |
 
 **Điều kiện bắt buộc:**
 - Có đủ 50 file nhãn.

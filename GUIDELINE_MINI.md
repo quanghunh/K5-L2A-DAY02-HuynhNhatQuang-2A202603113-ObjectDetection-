@@ -34,3 +34,6 @@ Phạm vi: task CVAT `Lab-Day02`, 50 ảnh `drive_001`–`drive_050` (640×640, 
 | `drive_002` | Xe trắng mui cao ở mép phải bị rìa ảnh cắt một phần. Không chắc là `van` hay SUV. | Gán `van`, box kéo sát mép phải ảnh. | Phần nhìn thấy có thân dạng hộp, mui cao và cửa sổ hông lớn, đúng dấu hiệu của `van`. Xe bị cắt rìa vẫn gán khi còn nhận ra lớp. |
 | `drive_009` | Nhiều xe buýt xếp chồng, xe sau bị xe trước che một phần. Góc trên bên trái có bãi xe dày đặc, xe nhỏ và dính vào nhau. | Gán từng xe buýt bị che, box bao cả phần không nhìn thấy (theo ước lượng của người gán). Không gán cụm xe dày đặc ở góc trên trái. | Xe bị che vẫn nhận ra là `bus` nên phải gán.|
 
+**Cần giảng viên làm rõ:**
+- Ranh giới giữa `van` và SUV/MPV.
+- Kích thước tối thiểu bắt buộc phải gán.
