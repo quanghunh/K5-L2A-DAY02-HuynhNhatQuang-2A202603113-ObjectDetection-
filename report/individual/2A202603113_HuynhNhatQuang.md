@@ -136,7 +136,7 @@ Nguồn: `model_eval_metrics.json`, [assets/yolo26_runs/vehicle_eval/](assets/yo
 - Có gold-set evaluation.
 - Không dùng eval để train.
 - Không thay đổi gold labels.
-- Đã chạy qua `check_yolo_labels.py` (50/50 hợp lệ), nên không bị giới hạn 49 điểm.
+- Đã chạy qua `check_yolo_labels.py` (50/50 hợp lệ).
 
 
 ## 8. Công cụ AI và tài liệu tham khảo
